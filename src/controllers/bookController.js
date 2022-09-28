@@ -3,13 +3,79 @@ const userModel= require("../Models/userModel")
 const bookModel = require('../Models/bookModel');
 const reviewModel = require('../Models/reviewModel')
 const validator = require('../validation/validator');
+const aws=require("aws-sdk")
 const today = moment();
+
+
+ aws.config.update({
+    accessKeyId: "AKIAY3L35MCRZNIRGT6N",
+    secretAccessKey: "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",
+    region: "ap-south-1"
+})
+
+let uploadFile= async ( file) =>{
+   return new Promise( function(resolve, reject) {
+   
+    let s3= new aws.S3({apiVersion: '2006-03-01'}); 
+
+    var uploadParams= {
+        ACL: "public-read",
+        Bucket: "classroom-training-bucket",  //HERE
+        Key: "abc/" + file.originalname, //HERE 
+        Body: file.buffer
+    }
+
+
+    s3.upload( uploadParams, function (err, data ){
+        if(err) {
+            return reject({"error": err})
+        }
+        console.log(data)
+        console.log("file uploaded succesfully")
+        return resolve(data.Location)
+    })
+
+
+
+   })
+}
+
+let bookCover= async (req, res)=>{
+
+    try{
+        let files= req.files
+        if(files && files.length>0){
+           
+            let uploadedFileURL= await uploadFile( files[0] )
+            res.status(201).send({msg: "file uploaded succesfully", data: uploadedFileURL})
+        }
+        else{
+            res.status(400).send({ msg: "No file found" })
+        }
+        
+    }
+    catch(err){
+        res.status(500).send({msg: err})
+    }
+    
+}
 
 const createBook = async (req, res) => {
     try {
         let data = req.body
+        // let files = req.files
+        // if (files && files.length > 0) {
 
-        let { title, excerpt, ISBN, category, reviews, subcategory, releasedAt, userId, isDeleted} = data;
+        //     let uploadedFileURL = await uploadFile(files[0])
+
+        //     requestBody.bookCover = uploadedFileURL
+
+        // } else {
+        //     res.status(400).send({ msg: "No file found" });
+        // }
+
+
+        let { title, excerpt, ISBN, category, reviews, subcategory, releasedAt, userId, isDeleted,bookCover} = data;
 
         if (!validator.isvalidReqBody(data)) return res.status(400).send({ status: false, message: "Please, provide book details to create book...!" })
 
@@ -50,7 +116,11 @@ const createBook = async (req, res) => {
         //releasedAt
         if (!validator.valid(releasedAt)) return res.status(400).send({ status: false, message: "releaseAt is required...!" })
         if (!moment.utc(releasedAt, "YYYY-MM-DD", true).isValid()) return res.status(400).send({ status: false, message: "enter date in valid format eg. (YYYY-MM-DD)...!" })
-        let savedUser={title, excerpt, ISBN, category, reviews, subcategory, releasedAt, userId, isDeleted}
+        //bookcover
+        if (!validator.valid(bookCover)) return res.status(400).send({ status: false, message: "bookCover is required...!" })
+
+
+        let savedUser={title, excerpt, ISBN, category, reviews, subcategory, releasedAt, userId, isDeleted,bookCover}
 
         let saveBook = await bookModel.create(savedUser);
         return res.status(201).send({ status: true, message: "Success", data: saveBook })
@@ -206,4 +276,4 @@ const deleted = async function (req, res) {
     }
 }
 
-module.exports = { createBook ,getbookbyid,getBooks,updateBook,deleted}
+module.exports = { createBook ,getbookbyid,getBooks,updateBook,deleted,bookCover}

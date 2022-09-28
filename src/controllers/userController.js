@@ -9,6 +9,7 @@ const jwt=require("jsonwebtoken")
 
 const createUser = async function (req, res) {
 try {
+    
         let data = req.body
         if (!validator.isvalidReqBody(data)) return res.status(400).send({ status: false, message: "data in request body is required" });
 

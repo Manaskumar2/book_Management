@@ -44,6 +44,10 @@ const bookModel = new mongoose.Schema({
     releasedAt:{
         type: Date,
         requried: true
+    },
+        bookCover:{
+        type : String,
+        required:true
     }
 }, {timestamps: true})
 

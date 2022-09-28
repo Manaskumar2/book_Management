@@ -2,7 +2,7 @@ const express=require('express')
 const router=express.Router()
 const {createUser,loginUser}=require("../controllers/userController")
 
-const {createBook ,getbookbyid,getBooks,updateBook,deleted}=require("../controllers/bookController")
+const {createBook ,getbookbyid,getBooks,updateBook,deleted,bookCover}=require("../controllers/bookController")
 
 const{authn,authz}=require('../middleware/auth')
 
@@ -31,7 +31,7 @@ router.get("/books/:bookId",authn,getbookbyid)
 router.put("/books/:bookId", authn,authz,updateBook)
 
 router.delete("/books/:bookId",authn,authz,deleted)
-
+router.post("/write-file-aws",bookCover)
 
 
 //--------------------⭐Review Apis⭐--------------------//

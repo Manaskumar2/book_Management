@@ -53,7 +53,7 @@ let loginPerson = req.decoded.userId;
   
       }
   
-       if (loginPerson !== userLogging)
+      if (loginPerson !== userLogging)
         return res.status(403).send({ status: false, msg: "Error, authorization failed" });
         
 

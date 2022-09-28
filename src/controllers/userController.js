@@ -8,7 +8,7 @@ const jwt=require("jsonwebtoken")
 
 
 const createUser = async function (req, res) {
-  try {
+try {
         let data = req.body
         if (!validator.isvalidReqBody(data)) return res.status(400).send({ status: false, message: "data in request body is required" });
 
@@ -22,7 +22,7 @@ const createUser = async function (req, res) {
         if (!data.name) return res.status(400).send({ status: false, message: "Name is required" });
         if (!validator.regexSpaceChar(data.name)) return res.status(400).send({ status: false, message: " enter Name is in valid format" });
         const checkName = await userModel.findOne({ name: data.name })
-        if (checkName) return res.status(400).send({ status: false, message: `author ${data.name} already exists` })
+        if (checkName) return res.status(400).send({ status: false, message: `user ${data.name} already exists` })
 
         //phoneNum
         if (!data.phone) return res.status(400).send({ status: false, message: "phone-number is required" });
@@ -57,7 +57,7 @@ const createUser = async function (req, res) {
 
 let loginUser= async function (req, res) {
     try {
-             let userName = req.body.email;
+            let userName = req.body.email;
         let password = req.body.password;
 
         let data = req.body

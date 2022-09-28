@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const moment=require('moment')
 const userModel= require("../Models/userModel")
 const bookModel = require('../Models/bookModel');
@@ -25,9 +24,9 @@ const createBook = async (req, res) => {
 
         //userId validation
         if (!validator.valid(userId)) return res.status(400).send({ status: false, message: "UserId is required...!" })
-         if (req.body.hasOwnProperty('userId')) {
+        if (req.body.hasOwnProperty('userId')) {
         if (!validator.isValidObjectId(userId)) return res.status(400).send({ status: false, message: "please enter the valid UserId...!" })
-         }
+        }
         let checkUser = await userModel.findById(userId);
         if (!checkUser) return res.status(404).send({ status: false, message: "user is not found" });
 
@@ -67,7 +66,7 @@ const getBooks=async function (req,res){
         let query={isDeleted:false,...data}
         // const {userId,category,subcategory}=data
         if (!Object.keys(data).length) {
-            let book = await bookModel.find({ $and: [{ isDeleted: false }] });
+            let book = await bookModel.find({ isDeleted: false });
             if (!Object.keys(book).length) {
                 return res.status(404).send({ status: false, message: "no book exist" });
             }
@@ -80,7 +79,7 @@ const getBooks=async function (req,res){
         
             return res.status(200).send({ status: true,message:"getbooklists", data: book});
             // return res.status(200).send({ status: true, list: books });
-           
+    
         }
     }catch (error) {
         return res.status(500).send({ status: false, message: error.message })
@@ -116,7 +115,7 @@ const getbookbyid = async function (req, res) {
         }
 
         // const bookdetails = findId._doc["reviewsData"] = reviewdata;
-      res.status(200).send({status:true,message:'Book list',data:bookdetails})
+    res.status(200).send({status:true,message:'Book list',data:bookdetails})
 
     }
 catch (error) {
@@ -187,7 +186,7 @@ const deleted = async function (req, res) {
     
         
         let bookId = req.params.bookId
-       
+    
         if(!validator.isValidObjectId(bookId)) return res.status(400).send({status: false,message: "invalid bookId"})
 
         let book = await bookModel.findById(bookId)
